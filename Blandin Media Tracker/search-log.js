@@ -25,5 +25,11 @@ const SEARCH_LOG = [
   ] },
   { date: '2026-09-25', found: 0, articles: [] },
   { date: '2026-09-25', found: 0, articles: [] },
-  { date: '2026-10-29', found: 0, articles: [] },
+  { date: '2026-10-29', found: 5, articles: [
+    { title: 'Greenway Area Community Fund highlights matching grant following Oktoberfest', url: 'http://www.grandrapidsmn.com/news/greenway-area-community-fund-highlights-matching-grant-following-oktoberfest/article_a8b56453-9c7b-4af2-980e-f93490436ad9.html' },
+    { title: 'Greenway Area Community Fund tops $1 million', url: 'http://www.grandrapidsmn.com/news/greenway-area-community-fund-tops-1-million/article_eda1e5c7-34c5-49f8-b808-4d75ed19f9f7.html' },
+    { title: 'Grant pushes Greenway Community Fund over $1 million', url: 'https://www.kaxe.org/local-news/2026-10-23/grant-pushes-greenway-community-fund-over-1-million' },
+    { title: 'Blandin Foundation alleges Wells Fargo mismanaged trust, asks court to step in', url: 'https://www.kaxe.org/local-news/2026-04-24/blandin-foundation-alleges-wells-fargo-mismanaged-trust-asks-court-to-step-in' },
+    { title: 'Meet the 2026 Ubuntu Leadership Award Winners', url: 'https://mcf.org/news/meet-2026-ubuntu-leadership-award-winners' },
+  ] },
 ];

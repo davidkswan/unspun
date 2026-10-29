@@ -22,4 +22,5 @@ const OUTLET_WATCHLIST = [
   { name: 'WTIP North Shore Community Radio', domain: 'wtip.org' },
   { name: 'Boreal Community Media',        domain: 'boreal.org' },
   { name: 'Citizen Portal (local gov. news)', domain: 'citizenportal.ai' },
+  { name: 'Minnesota Council on Foundations', domain: 'mcf.org' },
 ];
