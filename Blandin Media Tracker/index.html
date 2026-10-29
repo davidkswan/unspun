@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blandin Foundation — Media Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">BF</div>
+      <div class="brand-text">
+        <h1>Blandin Foundation</h1>
+        <p>Media Monitoring Dashboard</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="update-badge">Updated daily &middot; Current as of <strong id="last-updated-date">—</strong></span>
+    </div>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">&#9632; Dashboard</button>
+    <button class="tab-btn" data-tab="scoring" onclick="switchTab('scoring')">&#9733; Scoring</button>
+    <button class="tab-btn" data-tab="recent-searches" onclick="switchTab('recent-searches')">
+      &#9675; Recent Searches <span class="method-chip chip-rss">Web Search</span>
+    </button>
+    <button class="tab-btn" data-tab="all-stories" onclick="switchTab('all-stories')">&#9998; All Stories</button>
+    <button class="tab-btn" data-tab="manual-log" onclick="switchTab('manual-log')">
+      &#9675; Manual Log <span class="method-chip chip-manual">Manual</span>
+    </button>
+    <button class="tab-btn" data-tab="press-releases" onclick="switchTab('press-releases')">
+      &#9638; Press Releases <span class="method-chip chip-pr">PR</span>
+    </button>
+  </div>
+</nav>
+
+<main class="main-content">
+
+  <!-- ============================================================ -->
+  <!-- DASHBOARD TAB                                                  -->
+  <!-- ============================================================ -->
+  <section id="tab-dashboard" class="tab-panel active">
+
+    <div class="section-header">
+      <h2>Media Coverage Overview</h2>
+      <p>All mentions of the Blandin Foundation and rural Minnesota topics, combined across all tracking methods.</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Source Type</label>
+        <select id="f-source" onchange="applyFilters()">
+          <option value="">All Sources</option>
+          <option value="news">News</option>
+          <option value="blog">Blog</option>
+          <option value="government">Government</option>
+          <option value="advocacy">Advocacy / Nonprofit</option>
+          <option value="academic">Academic</option>
+          <option value="social">Social Media</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Strategic Theme</label>
+        <select id="f-theme" onchange="applyFilters()">
+          <option value="">All Themes</option>
+          <option value="broadband">Broadband &amp; Digital Access</option>
+          <option value="community-wealth">Community Wealth-Building</option>
+          <option value="rural-placemaking">Rural Placemaking</option>
+          <option value="small-communities">Small Communities</option>
+          <option value="native-nations">Native Nations</option>
+          <option value="philanthropy">Philanthropy &amp; Grants</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Outlet Tier</label>
+        <select id="f-tier" onchange="applyFilters()">
+          <option value="">All Tiers</option>
+          <option value="1">T1 — Home Area</option>
+          <option value="2">T2 — Statewide Rural</option>
+          <option value="3">T3 — National</option>
+          <option value="0">Major Metro</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Method</label>
+        <select id="f-method" onchange="applyFilters()">
+          <option value="">All Methods</option>
+          <option value="google-alerts">Google Alerts</option>
+          <option value="rss-feed">RSS Feed</option>
+          <option value="web-search">Web Search</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+      <div class="filter-group filter-check">
+        <label class="check-label"><input type="checkbox" id="f-notable" onchange="applyFilters()"> Notable only</label>
+      </div>
+      <button class="btn-clear" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card accent">
+        <div class="metric-val" id="m-total">0</div>
+        <div class="metric-label">Total Mentions</div>
+        <div class="metric-sub">across all sources &amp; methods</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="m-notable">0</div>
+        <div class="metric-label">Notable Mentions</div>
+        <div class="metric-sub">high-visibility coverage</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="m-avg-score">0</div>
+        <div class="metric-label">Avg. Strategic Score</div>
+        <div class="metric-sub">across filtered mentions</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="m-t1-count">0</div>
+        <div class="metric-label">Tier 1 Mentions</div>
+        <div class="metric-sub">home area &amp; hyperlocal</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Latest Added Articles</h3>
+        <span class="card-meta">Most recent auto-discovered &amp; manually added mentions</span>
+      </div>
+      <div id="latest-added-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Strategic Pillar Coverage</h3>
+        <span class="card-meta">Mentions by Blandin Foundation pillar</span>
+      </div>
+      <div class="theme-pills" id="theme-pills"></div>
+    </div>
+
+    <div class="charts-row">
+      <div class="card chart-card">
+        <div class="card-header"><h3>Weekly Mention Volume</h3></div>
+        <div class="chart-wrap"><canvas id="chart-weekly"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><h3>By Outlet Tier</h3></div>
+        <div class="chart-wrap"><canvas id="chart-tier"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="card chart-card">
+        <div class="card-header"><h3>By Strategic Theme</h3></div>
+        <div class="chart-wrap"><canvas id="chart-theme"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><h3>By Tracking Method</h3></div>
+        <div class="chart-wrap"><canvas id="chart-method"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Mention Log</h3>
+        <div class="card-controls">
+          <span class="count-badge" id="mention-count">— mentions</span>
+          <select id="sort-order" onchange="renderMentionTable()">
+            <option value="newest">Newest first</option>
+            <option value="score">Highest score first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="notable">Notable first</option>
+          </select>
+          <button class="btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Date</th>
+              <th>Headline</th>
+              <th>Source &amp; Tier</th>
+              <th>Prominence</th>
+              <th>Sentiment</th>
+              <th>Theme(s)</th>
+              <th>Notable</th>
+              <th>Method</th>
+            </tr>
+          </thead>
+          <tbody id="mention-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SCORING TAB                                                    -->
+  <!-- ============================================================ -->
+  <section id="tab-scoring" class="tab-panel">
+
+    <div class="section-header">
+      <h2>Strategic Impact Scoring</h2>
+      <p>A custom scoring model that replaces AVE (Advertising Value Equivalency) — weighted to reflect what actually matters for Blandin Foundation's mission, not generic media circulation figures.</p>
+    </div>
+
+    <!-- Why it replaces AVE -->
+    <div class="card explainer-card">
+      <div class="card-header">
+        <h3>Why This Replaces AVE</h3>
+        <span class="method-tag tag-manual">Blandin-specific</span>
+      </div>
+      <div class="ave-explainer">
+        <p style="padding:16px 20px 0;color:var(--subtext);font-size:13px;">AVE assigns dollar values based on ad rates and circulation size — which means a passing mention in the Star Tribune looks more valuable than a headline story on KAXE, even though KAXE reaches Blandin's actual mission audience. Strategic Impact Score inverts that logic.</p>
+        <div class="ave-compare">
+          <div class="ave-col ave-bad">
+            <div class="ave-col-label">AVE says...</div>
+            <div class="ave-item">
+              <div class="ave-outlet">Star Tribune (passing mention)</div>
+              <div class="ave-value bad-value">$8,400 "value"</div>
+            </div>
+            <div class="ave-item">
+              <div class="ave-outlet">KAXE Community Radio (headline)</div>
+              <div class="ave-value bad-value">$120 "value"</div>
+            </div>
+            <div class="ave-note">Based on ad rates &amp; circulation only</div>
+          </div>
+          <div class="ave-arrow">&#8594;</div>
+          <div class="ave-col ave-good">
+            <div class="ave-col-label">Strategic Score says...</div>
+            <div class="ave-item">
+              <div class="ave-outlet">Star Tribune (passing mention)</div>
+              <div class="ave-value good-value">Score: 32</div>
+            </div>
+            <div class="ave-item">
+              <div class="ave-outlet">KAXE Community Radio (headline)</div>
+              <div class="ave-value good-value">Score: 94</div>
+            </div>
+            <div class="ave-note">Weighted for Blandin's actual mission reach</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weight sliders -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Configure Scoring Weights</h3>
+        <div class="card-controls">
+          <span class="weight-total" id="weight-total">Total: 100%</span>
+          <button class="btn-sm btn-ghost" onclick="resetWeights()">Reset to defaults</button>
+        </div>
+      </div>
+      <div class="sliders-grid">
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Outlet Tier</label>
+            <span class="weight-pct" id="w-tier-pct">30%</span>
+          </div>
+          <input type="range" class="weight-slider" id="w-tier" min="0" max="60" value="30" oninput="updateWeights()">
+          <div class="tier-legend">
+            <span class="tier-badge tier-1">T1 Home Area = 100</span>
+            <span class="tier-badge tier-2">T2 Statewide = 65</span>
+            <span class="tier-badge tier-3">T3 National = 45</span>
+            <span class="tier-badge tier-0">Metro = 30</span>
+          </div>
+          <div class="slider-desc">Strategic value of the outlet for Blandin's mission. Tier 1 (home area, tribal press, KAXE) scores highest regardless of circulation size.</div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Prominence</label>
+            <span class="weight-pct" id="w-prominence-pct">25%</span>
+          </div>
+          <input type="range" class="weight-slider" id="w-prominence" min="0" max="60" value="25" oninput="updateWeights()">
+          <div class="tier-legend">
+            <span class="tier-badge tier-1">Headline = 100</span>
+            <span class="tier-badge tier-2">Body = 55</span>
+            <span class="tier-badge tier-3">Passing = 20</span>
+          </div>
+          <div class="slider-desc">Where in the story does Blandin appear? Headline coverage scores much higher than a passing mention buried in the article.</div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Sentiment</label>
+            <span class="weight-pct" id="w-sentiment-pct">25%</span>
+          </div>
+          <input type="range" class="weight-slider" id="w-sentiment" min="0" max="60" value="25" oninput="updateWeights()">
+          <div class="tier-legend">
+            <span class="tier-badge tier-1">Very Positive = 100</span>
+            <span class="tier-badge tier-2">Positive = 75</span>
+            <span class="tier-badge tier-3">Neutral = 50</span>
+            <span class="tier-badge tier-0">Mixed = 20</span>
+          </div>
+          <div class="slider-desc">Tone of the coverage toward Blandin Foundation and its work. Neutral coverage still counts — it's not penalized heavily.</div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Message Pull-Through</label>
+            <span class="weight-pct" id="w-pull-pct">20%</span>
+          </div>
+          <input type="range" class="weight-slider" id="w-pull" min="0" max="60" value="20" oninput="updateWeights()">
+          <div class="tier-legend">
+            <span class="tier-badge tier-1">On Message = 100</span>
+            <span class="tier-badge tier-2">Partial = 50</span>
+            <span class="tier-badge tier-3">Off Message = 10</span>
+          </div>
+          <div class="slider-desc">Did the coverage use Blandin's actual framing and talking points, or just mention the name in passing with no context?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top scored table -->
+    <div class="card">
+      <div class="card-header">
+        <h3>All Mentions by Strategic Impact Score</h3>
+        <span class="card-meta" id="scoring-subtitle">Based on current weights</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Date</th>
+              <th>Headline</th>
+              <th>Source &amp; Tier</th>
+              <th>Prominence</th>
+              <th>Sentiment</th>
+              <th>Pull-Through</th>
+              <th>Theme(s)</th>
+            </tr>
+          </thead>
+          <tbody id="scoring-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RECENT SEARCHES TAB                                            -->
+  <!-- ============================================================ -->
+  <section id="tab-recent-searches" class="tab-panel">
+    <div class="method-hero rss-hero">
+      <div class="method-icon">&#9675;</div>
+      <div class="method-hero-text">
+        <h2>Recent Searches</h2>
+        <p>Log of the daily scheduled web-search run — whether it found new Blandin Foundation coverage or came up empty.</p>
+      </div>
+      <div class="method-stat-box" id="search-log-stats-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Search Run History</h3>
+        <span class="count-badge" id="search-log-count">— runs</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Result</th>
+              <th>Articles Found</th>
+            </tr>
+          </thead>
+          <tbody id="search-log-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ALL STORIES TAB (view / edit every story)                      -->
+  <!-- ============================================================ -->
+  <section id="tab-all-stories" class="tab-panel">
+    <div class="section-header">
+      <h2>All Stories</h2>
+      <p>Every story currently tracked, regardless of how it was added. Edit any field, or hide a story you don't want counted on the dashboard.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Story Directory</h3>
+        <div class="card-controls">
+          <input type="text" id="all-stories-search" class="form-input" placeholder="Search title or source…" style="width:220px" oninput="renderAllStoriesTab()">
+          <label class="check-label"><input type="checkbox" id="all-stories-show-hidden" onchange="renderAllStoriesTab()"> Show hidden</label>
+          <span class="count-badge" id="all-stories-count">— stories</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Date</th>
+              <th>Headline</th>
+              <th>Source &amp; Tier</th>
+              <th>Method</th>
+              <th>Sentiment</th>
+              <th>Notable</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="all-stories-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MANUAL LOG TAB                                                 -->
+  <!-- ============================================================ -->
+  <section id="tab-manual-log" class="tab-panel">
+    <div class="method-hero manual-hero">
+      <div class="method-icon">&#9998;</div>
+      <div class="method-hero-text">
+        <h2>Manual Log</h2>
+        <p>Capture mentions that automated feeds miss — TV segments, print articles, social media posts, podcasts, or anything you spot yourself. All fields feed the Strategic Impact Score.</p>
+      </div>
+      <div class="method-stat-box" id="manual-stats-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Log a New Mention</h3></div>
+      <form id="manual-form" onsubmit="submitManualEntry(event)">
+        <div class="form-grid">
+          <div class="form-group col-2">
+            <label>Headline / Title <span class="required">*</span></label>
+            <input type="text" id="e-title" class="form-input" required placeholder="Full article headline or segment title">
+          </div>
+          <div class="form-group">
+            <label>Source Name <span class="required">*</span></label>
+            <input type="text" id="e-source" class="form-input" required placeholder="e.g. KAXE, Grand Rapids Herald-Review">
+          </div>
+          <div class="form-group">
+            <label>URL / Link</label>
+            <input type="url" id="e-url" class="form-input" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label>Publication Date <span class="required">*</span></label>
+            <input type="date" id="e-date" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>Source Type</label>
+            <select id="e-source-type" class="form-input">
+              <option value="news">News</option>
+              <option value="blog">Blog</option>
+              <option value="government">Government</option>
+              <option value="advocacy">Advocacy / Nonprofit</option>
+              <option value="academic">Academic</option>
+              <option value="social">Social Media</option>
+              <option value="other">Other (TV, Print, Podcast)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Outlet Tier <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="e-tier" class="form-input">
+              <option value="1">Tier 1 — Home Area / Hyperlocal Strategic</option>
+              <option value="2" selected>Tier 2 — Statewide Rural / Regional</option>
+              <option value="3">Tier 3 — National / Trade</option>
+              <option value="0">Major Metro (Star Tribune, etc.)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Geography</label>
+            <select id="e-geo" class="form-input">
+              <option value="local">Local</option>
+              <option value="state" selected>State (MN)</option>
+              <option value="national">National</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Prominence <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="e-prominence" class="form-input">
+              <option value="headline">Headline / Lead Story</option>
+              <option value="body" selected>Body Coverage</option>
+              <option value="passing">Passing Reference</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sentiment <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="e-sentiment" class="form-input">
+              <option value="very-positive">Very Positive</option>
+              <option value="positive" selected>Positive</option>
+              <option value="neutral">Neutral / Informational</option>
+              <option value="critical">Mixed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message Pull-Through <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="e-pull" class="form-input">
+              <option value="yes">Yes — Uses Blandin's framing &amp; talking points</option>
+              <option value="partial" selected>Partial — Some alignment</option>
+              <option value="no">No — Name only, no context</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Narrative Role</label>
+            <select id="e-narrative" class="form-input">
+              <option value="primary">Primary Subject</option>
+              <option value="source">Expert Source / Quoted</option>
+              <option value="comparison">Comparison / Context</option>
+              <option value="passing">Passing Mention</option>
+            </select>
+          </div>
+          <div class="form-group col-2">
+            <label>Strategic Theme(s)</label>
+            <div class="checkbox-grid">
+              <label class="check-opt"><input type="checkbox" name="e-theme" value="broadband"> Broadband &amp; Digital Access</label>
+              <label class="check-opt"><input type="checkbox" name="e-theme" value="community-wealth"> Community Wealth-Building</label>
+              <label class="check-opt"><input type="checkbox" name="e-theme" value="rural-placemaking"> Rural Placemaking</label>
+              <label class="check-opt"><input type="checkbox" name="e-theme" value="small-communities"> Small Communities</label>
+              <label class="check-opt"><input type="checkbox" name="e-theme" value="native-nations"> Native Nations</label>
+              <label class="check-opt"><input type="checkbox" name="e-theme" value="philanthropy"> Philanthropy &amp; Grants</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Notable Mention?</label>
+            <label class="check-opt"><input type="checkbox" id="e-notable"> <span>Mark as notable</span></label>
+            <div class="field-hint">Notable = national coverage, policy impact, or directly advances Blandin's three pillars.</div>
+          </div>
+          <div class="form-group col-2">
+            <label>Notes / Snippet</label>
+            <textarea id="e-snippet" class="form-input" rows="3" placeholder="Brief description, key quote, or relevant context..."></textarea>
+          </div>
+        </div>
+        <div class="form-submit-row">
+          <button type="submit" class="btn-primary">Log Mention</button>
+          <button type="button" class="btn-ghost" onclick="clearManualForm()">Clear Form</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Manually Logged Mentions</h3>
+        <div class="card-controls">
+          <span class="count-badge" id="manual-count">0 entries</span>
+          <button class="btn-sm btn-outline" onclick="exportManualCSV()">Export CSV</button>
+          <button class="btn-sm btn-danger" onclick="clearAllManual()">Clear All</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Date</th>
+              <th>Headline</th>
+              <th>Source &amp; Tier</th>
+              <th>Prominence</th>
+              <th>Sentiment</th>
+              <th>Theme(s)</th>
+              <th>Notable</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="manual-tbody">
+            <tr><td colspan="9" class="empty-state">No manual entries yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================ -->
+  <!-- PRESS RELEASE TRACKER TAB                                     -->
+  <!-- ============================================================ -->
+  <section id="tab-press-releases" class="tab-panel">
+
+    <div class="section-header">
+      <h2>Press Release Coverage Tracker</h2>
+      <p>Track media coverage generated by specific press releases. Log which articles picked up each key message.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Press Releases</h3>
+        <button class="btn-sm btn-primary" onclick="togglePanel('add-pr-panel')">+ Add Press Release</button>
+      </div>
+
+      <div id="add-pr-panel" class="hidden" style="border-top:1px solid var(--border);padding:20px 24px">
+        <div class="form-grid">
+          <div class="form-group col-2">
+            <label>Title <span class="required">*</span></label>
+            <input type="text" id="pr-title" class="form-input" placeholder="e.g. Blandin Foundation Announces 2026 Broadband Grant Round">
+          </div>
+          <div class="form-group">
+            <label>Release Date <span class="required">*</span></label>
+            <input type="date" id="pr-date" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Strategic Themes</label>
+            <div class="checkbox-grid" style="margin-top:4px">
+              <label class="check-opt"><input type="checkbox" name="pr-theme" value="broadband"> Broadband &amp; Digital Access</label>
+              <label class="check-opt"><input type="checkbox" name="pr-theme" value="community-wealth"> Community Wealth-Building</label>
+              <label class="check-opt"><input type="checkbox" name="pr-theme" value="rural-placemaking"> Rural Placemaking</label>
+              <label class="check-opt"><input type="checkbox" name="pr-theme" value="small-communities"> Small Communities</label>
+              <label class="check-opt"><input type="checkbox" name="pr-theme" value="native-nations"> Native Nations</label>
+              <label class="check-opt"><input type="checkbox" name="pr-theme" value="philanthropy"> Philanthropy &amp; Grants</label>
+            </div>
+          </div>
+          <div class="form-group col-2">
+            <label>Summary</label>
+            <textarea id="pr-summary" class="form-input" rows="2" placeholder="One or two sentence description of the release…"></textarea>
+          </div>
+          <div class="form-group col-2">
+            <label>Key Messages <span class="field-hint" style="font-weight:400;font-size:11px">(one per line — track which articles pick these up)</span></label>
+            <textarea id="pr-messages" class="form-input" rows="4" placeholder="e.g.&#10;$2.1M in new rural broadband grants&#10;14 Minnesota counties to benefit&#10;Blandin as BEAD implementation partner"></textarea>
+          </div>
+        </div>
+        <div class="form-submit-row">
+          <button class="btn-primary" onclick="savePressRelease()">Save Press Release</button>
+          <button class="btn-ghost" onclick="togglePanel('add-pr-panel')">Cancel</button>
+        </div>
+      </div>
+
+      <div id="pr-list" style="padding:0 0 8px"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p>Blandin Foundation Media Tracker &mdash; Monitoring rural Minnesota coverage</p>
+    <p class="footer-sub">Manual entries stored in browser. Strategic Impact Score replaces AVE.</p>
+  </div>
+</footer>
+
+<div id="edit-modal-overlay" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="edit-modal-title">Edit Story</h3>
+      <button type="button" class="modal-close" onclick="closeEditModal()">&#10005;</button>
+    </div>
+    <form id="edit-form" onsubmit="saveEditModal(event)">
+      <div class="modal-body">
+        <p id="edit-modal-source-note" class="field-hint" style="margin:0 0 16px"></p>
+        <div class="form-grid">
+          <div class="form-group col-2">
+            <label>Headline / Title <span class="required">*</span></label>
+            <input type="text" id="edit-title" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>Source Name <span class="required">*</span></label>
+            <input type="text" id="edit-source" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>URL / Link</label>
+            <input type="url" id="edit-url" class="form-input" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label>Publication Date <span class="required">*</span></label>
+            <input type="date" id="edit-date" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>Source Type</label>
+            <select id="edit-source-type" class="form-input">
+              <option value="news">News</option>
+              <option value="blog">Blog</option>
+              <option value="government">Government</option>
+              <option value="advocacy">Advocacy / Nonprofit</option>
+              <option value="academic">Academic</option>
+              <option value="social">Social Media</option>
+              <option value="other">Other (TV, Print, Podcast)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Outlet Tier <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="edit-tier" class="form-input">
+              <option value="1">Tier 1 — Home Area / Hyperlocal Strategic</option>
+              <option value="2">Tier 2 — Statewide Rural / Regional</option>
+              <option value="3">Tier 3 — National / Trade</option>
+              <option value="0">Major Metro (Star Tribune, etc.)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Geography</label>
+            <select id="edit-geo" class="form-input">
+              <option value="local">Local</option>
+              <option value="state">State (MN)</option>
+              <option value="national">National</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Prominence <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="edit-prominence" class="form-input">
+              <option value="headline">Headline / Lead Story</option>
+              <option value="body">Body Coverage</option>
+              <option value="passing">Passing Reference</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sentiment <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="edit-sentiment" class="form-input">
+              <option value="very-positive">Very Positive</option>
+              <option value="positive">Positive</option>
+              <option value="neutral">Neutral / Informational</option>
+              <option value="critical">Mixed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message Pull-Through <span class="score-field-hint">&#9733; affects score</span></label>
+            <select id="edit-pull" class="form-input">
+              <option value="yes">Yes — Uses Blandin's framing &amp; talking points</option>
+              <option value="partial">Partial — Some alignment</option>
+              <option value="no">No — Name only, no context</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Narrative Role</label>
+            <select id="edit-narrative" class="form-input">
+              <option value="primary">Primary Subject</option>
+              <option value="source">Expert Source / Quoted</option>
+              <option value="comparison">Comparison / Context</option>
+              <option value="passing">Passing Mention</option>
+            </select>
+          </div>
+          <div class="form-group col-2">
+            <label>Strategic Theme(s)</label>
+            <div class="checkbox-grid">
+              <label class="check-opt"><input type="checkbox" name="edit-theme" value="broadband"> Broadband &amp; Digital Access</label>
+              <label class="check-opt"><input type="checkbox" name="edit-theme" value="community-wealth"> Community Wealth-Building</label>
+              <label class="check-opt"><input type="checkbox" name="edit-theme" value="rural-placemaking"> Rural Placemaking</label>
+              <label class="check-opt"><input type="checkbox" name="edit-theme" value="small-communities"> Small Communities</label>
+              <label class="check-opt"><input type="checkbox" name="edit-theme" value="native-nations"> Native Nations</label>
+              <label class="check-opt"><input type="checkbox" name="edit-theme" value="philanthropy"> Philanthropy &amp; Grants</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Notable Mention?</label>
+            <label class="check-opt"><input type="checkbox" id="edit-notable"> <span>Mark as notable</span></label>
+          </div>
+          <div class="form-group col-2">
+            <label>Notes / Snippet</label>
+            <textarea id="edit-snippet" class="form-input" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="edit-reset-btn" class="btn-ghost hidden" onclick="resetStoryToOriginal()">Reset to Original</button>
+        <div style="flex:1"></div>
+        <button type="button" class="btn-ghost" onclick="closeEditModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script>document.write('<script src="auto-articles.js?t=' + Date.now() + '"><\/script>');</script>
+<script>document.write('<script src="search-log.js?t=' + Date.now() + '"><\/script>');</script>
+<script src="app.js?v=11"></script>
+</body>
+</html>
