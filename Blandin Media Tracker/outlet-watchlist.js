@@ -3,8 +3,11 @@
 // small hyperlocal MN papers, so this list exists to catch them directly.
 // When a user flags a missed article from a new outlet, add that outlet's
 // domain here so future runs check it automatically.
+//
+// Optional `page`: a Blandin topic/tag page on that outlet to fetch directly
+// each run, which is more reliable than site: search for that outlet.
 const OUTLET_WATCHLIST = [
-  { name: 'KAXE Northern Community Radio', domain: 'kaxe.org' },
+  { name: 'KAXE Northern Community Radio', domain: 'kaxe.org', page: 'https://www.kaxe.org/tags/blandin-foundation' },
   { name: 'Grand Rapids Herald-Review',    domain: 'grandrapidsmn.com' },
   { name: 'Brainerd Dispatch',             domain: 'brainerddispatch.com' },
   { name: 'Bemidji Pioneer',               domain: 'bemidjipioneer.com' },
@@ -23,4 +26,7 @@ const OUTLET_WATCHLIST = [
   { name: 'Boreal Community Media',        domain: 'boreal.org' },
   { name: 'Citizen Portal (local gov. news)', domain: 'citizenportal.ai' },
   { name: 'Minnesota Council on Foundations', domain: 'mcf.org' },
+  { name: 'Star Tribune',                  domain: 'startribune.com' },
+  { name: 'Lakeland PBS',                  domain: 'lakelandpbs.com' },
+  { name: 'Grand Rapids Area Community Foundation', domain: 'gracf.org' },
 ];

@@ -25,7 +25,9 @@ const SEARCH_LOG = [
   ] },
   { date: '2026-09-25', found: 0, articles: [] },
   { date: '2026-09-25', found: 0, articles: [] },
-  { date: '2026-10-29', found: 5, articles: [
+  { date: '2026-10-29', found: 7, articles: [
+    { title: 'Blandin Foundation claims Wells Fargo conflict of interest cost the nonprofit millions', url: 'https://www.startribune.com/blandin-foundation-sues-wells-fargo-conflict-of-interest-ocio-underperformed-trust-portfolio/601847423' },
+    { title: 'As local banks vanish, foundations should fill the lending gap', url: 'https://www.philanthropy.com/opinion/as-local-banks-vanish-foundations-should-fill-the-lending-gap/' },
     { title: 'Greenway Area Community Fund highlights matching grant following Oktoberfest', url: 'http://www.grandrapidsmn.com/news/greenway-area-community-fund-highlights-matching-grant-following-oktoberfest/article_a8b56453-9c7b-4af2-980e-f93490436ad9.html' },
     { title: 'Greenway Area Community Fund tops $1 million', url: 'http://www.grandrapidsmn.com/news/greenway-area-community-fund-tops-1-million/article_eda1e5c7-34c5-49f8-b808-4d75ed19f9f7.html' },
     { title: 'Grant pushes Greenway Community Fund over $1 million', url: 'https://www.kaxe.org/local-news/2026-10-23/grant-pushes-greenway-community-fund-over-1-million' },
