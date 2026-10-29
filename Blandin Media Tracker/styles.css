@@ -265,7 +265,7 @@ code {
   border: 1.5px solid currentColor;
 }
 .theme-pill .pill-count {
-  background: currentColor;
+  background: var(--pill, #64748B);
   color: #fff;
   border-radius: 10px;
   font-size: 11px;
@@ -847,12 +847,12 @@ textarea.form-input { resize: vertical; }
 .dot-philanthropy     { background: #FEF9EC; color: #A16207; }
 
 /* Updated theme pill colors for Blandin pillars */
-.theme-pill[data-theme="broadband"]          { color: #1D4ED8; }
-.theme-pill[data-theme="community-wealth"]   { color: #059669; }
-.theme-pill[data-theme="rural-placemaking"]  { color: #7C3AED; }
-.theme-pill[data-theme="small-communities"]  { color: #D97706; }
-.theme-pill[data-theme="native-nations"]     { color: #DC2626; }
-.theme-pill[data-theme="philanthropy"]       { color: #C9922A; }
+.theme-pill[data-theme="broadband"]          { color: #1D4ED8; --pill: #1D4ED8; }
+.theme-pill[data-theme="community-wealth"]   { color: #059669; --pill: #059669; }
+.theme-pill[data-theme="rural-placemaking"]  { color: #7C3AED; --pill: #7C3AED; }
+.theme-pill[data-theme="small-communities"]  { color: #D97706; --pill: #D97706; }
+.theme-pill[data-theme="native-nations"]     { color: #DC2626; --pill: #DC2626; }
+.theme-pill[data-theme="philanthropy"]       { color: #C9922A; --pill: #C9922A; }
 
 /* --- Scoring Tab — AVE Comparison ------------------------------- */
 .ave-explainer { }

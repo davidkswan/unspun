@@ -1,5 +1,6 @@
-// Populated by the scheduled web-search agent. Each entry follows the same
-// shape as SAMPLE_MENTIONS in app.js. Safe for automation to append to.
+// Populated by the scheduled web-search agent (see ROUTINE.md at the repo
+// root for the article shape). Only real, verified coverage belongs here.
+// Safe for automation to append to.
 const AUTO_MENTIONS = [
   {
     id: 'auto-20260108-itasca-investments',

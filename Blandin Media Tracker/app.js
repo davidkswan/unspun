@@ -53,193 +53,6 @@ const METHOD_LABELS = { 'google-alerts': 'Google Alerts', 'rss-feed': 'RSS Feed'
 const DEFAULT_WEIGHTS = { tier: 30, prominence: 25, sentiment: 25, pullThrough: 20 };
 
 // ----------------------------------------------------------------
-// SAMPLE DATA  — 20 pre-loaded mentions with full scoring fields
-// ----------------------------------------------------------------
-
-const SAMPLE_MENTIONS = [
-  {
-    id: 's1',
-    title: "Blandin Foundation's Broadband Initiative Shows Results in Northeast Minnesota",
-    source: 'Minnesota Public Radio', sourceType: 'news', url: 'https://www.mprnews.org',
-    date: '2026-06-29', geography: 'state',
-    themes: ['broadband', 'small-communities'], notable: true, method: 'google-alerts',
-    tier: 2, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "The Blandin Foundation reports a 34% increase in connected households across northeastern Minnesota communities participating in its rural broadband initiative.",
-  },
-  {
-    id: 's2',
-    title: 'Rural Health Care Access Remains Critical Challenge in Greater Minnesota',
-    source: 'Star Tribune', sourceType: 'news', url: 'https://www.startribune.com',
-    date: '2026-06-27', geography: 'state',
-    themes: ['rural-placemaking', 'small-communities'], notable: true, method: 'rss-feed',
-    tier: 0, prominence: 'body', sentiment: 'neutral', pullThrough: 'partial', narrativeRole: 'comparison',
-    snippet: "A new report highlights persistent gaps in health care for rural Minnesotans and calls for continued foundation investment in community health infrastructure.",
-  },
-  {
-    id: 's3',
-    title: 'Blandin Foundation Awards Leadership Grants to 12 Rural Communities',
-    source: 'Duluth News Tribune', sourceType: 'news', url: 'https://www.duluthnewstribune.com',
-    date: '2026-06-25', geography: 'local',
-    themes: ['philanthropy', 'community-wealth'], notable: false, method: 'google-alerts',
-    tier: 2, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "Twelve rural Minnesota communities received $25,000 Blandin Foundation community leadership grants to support local capacity building.",
-  },
-  {
-    id: 's4',
-    title: 'Federal BEAD Funding Begins Flowing to Rural Minnesota Broadband Projects',
-    source: 'MinnPost', sourceType: 'news', url: 'https://www.minnpost.com',
-    date: '2026-06-24', geography: 'state',
-    themes: ['broadband', 'small-communities'], notable: true, method: 'rss-feed',
-    tier: 2, prominence: 'body', sentiment: 'positive', pullThrough: 'partial', narrativeRole: 'source',
-    snippet: "Minnesota receives $652M in BEAD funds. Blandin Foundation named as a key implementation partner in helping rural communities access the funding.",
-  },
-  {
-    id: 's5',
-    title: 'Digital Literacy Programs Expand in Rural Minnesota Schools',
-    source: 'EdPost Minnesota', sourceType: 'advocacy', url: 'https://www.edpost.com',
-    date: '2026-06-22', geography: 'state',
-    themes: ['broadband', 'community-wealth'], notable: false, method: 'rss-feed',
-    tier: 2, prominence: 'body', sentiment: 'positive', pullThrough: 'partial', narrativeRole: 'source',
-    snippet: "A coalition including Blandin Foundation is funding digital literacy programs in rural districts where students have fallen behind due to limited home internet access.",
-  },
-  {
-    id: 's6',
-    title: 'Greater Minnesota Voices: Broadband Changes Lives in Small Towns',
-    source: 'Minnesota Public Radio', sourceType: 'news', url: 'https://www.mprnews.org',
-    date: '2026-06-21', geography: 'state',
-    themes: ['broadband', 'rural-placemaking'], notable: true, method: 'rss-feed',
-    tier: 2, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "Residents of Backus, Floodwood, and Barnum share how reliable broadband has transformed work, education, and health care in their rural communities.",
-  },
-  {
-    id: 's7',
-    title: 'Blandin Foundation Announces 2026 Community Leadership Program Cohort',
-    source: 'Blandin Foundation', sourceType: 'advocacy', url: 'https://www.blandinfoundation.org',
-    date: '2026-06-20', geography: 'state',
-    themes: ['philanthropy', 'community-wealth'], notable: false, method: 'google-alerts',
-    tier: 2, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "28 rural leaders from 19 communities across greater Minnesota selected for the 2026 Blandin Foundation Community Leadership Program cohort.",
-  },
-  {
-    id: 's8',
-    title: 'Rural Minnesota Workforce Development Funding Announced',
-    source: 'Pine Journal', sourceType: 'news', url: 'https://www.pinejournal.com',
-    date: '2026-06-19', geography: 'local',
-    themes: ['community-wealth', 'rural-placemaking'], notable: false, method: 'rss-feed',
-    tier: 1, prominence: 'body', sentiment: 'positive', pullThrough: 'no', narrativeRole: 'comparison',
-    snippet: "New state and foundation funding will support workforce training programs tailored to rural economies, with an emphasis on technology and healthcare careers.",
-  },
-  {
-    id: 's9',
-    title: 'Internet Access Gaps Persist in Rural Areas Despite Progress, Report Finds',
-    source: 'Star Tribune', sourceType: 'news', url: 'https://www.startribune.com',
-    date: '2026-06-18', geography: 'state',
-    themes: ['broadband', 'small-communities'], notable: true, method: 'rss-feed',
-    tier: 0, prominence: 'headline', sentiment: 'neutral', pullThrough: 'partial', narrativeRole: 'comparison',
-    snippet: "Significant broadband gaps remain in rural Minnesota — particularly for households earning under $35,000 and in tribal communities — despite years of investment.",
-  },
-  {
-    id: 's10',
-    title: 'New Grant Will Support Mental Health Services in Rural Minnesota',
-    source: 'West Central Tribune', sourceType: 'news', url: 'https://www.wctrib.com',
-    date: '2026-06-17', geography: 'local',
-    themes: ['rural-placemaking', 'small-communities'], notable: false, method: 'manual',
-    tier: 1, prominence: 'headline', sentiment: 'positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "A multi-year Blandin Foundation grant will expand telehealth and in-person mental health services in five west-central Minnesota counties.",
-  },
-  {
-    id: 's11',
-    title: 'Blandin Foundation Partners with State on Rural Broadband Mapping Initiative',
-    source: 'Broadband Breakfast', sourceType: 'news', url: 'https://broadbandbreakfast.com',
-    date: '2026-06-16', geography: 'national',
-    themes: ['broadband', 'philanthropy'], notable: true, method: 'google-alerts',
-    tier: 3, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "Minnesota's Office of Broadband Development and the Blandin Foundation announce a joint initiative to improve broadband mapping accuracy in underserved rural areas.",
-  },
-  {
-    id: 's12',
-    title: 'KAXE Segment: Leech Lake Band Broadband Expansion Update',
-    source: 'KAXE Northern Community Radio', sourceType: 'news', url: 'https://www.kaxe.org',
-    date: '2026-06-15', geography: 'local',
-    themes: ['broadband', 'native-nations'], notable: true, method: 'manual',
-    tier: 1, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "KAXE covers the Leech Lake Band's broadband expansion, featuring Blandin Foundation program staff who helped structure the project funding.",
-  },
-  {
-    id: 's13',
-    title: 'Rural Property Values Rising in Towns with Reliable Internet Access',
-    source: 'Finance & Commerce', sourceType: 'news', url: 'https://finance-commerce.com',
-    date: '2026-06-14', geography: 'state',
-    themes: ['broadband', 'rural-placemaking'], notable: false, method: 'rss-feed',
-    tier: 2, prominence: 'body', sentiment: 'positive', pullThrough: 'partial', narrativeRole: 'source',
-    snippet: "Research shows rural Minnesota towns with reliable broadband see faster home value appreciation and stronger small business formation than unconnected areas.",
-  },
-  {
-    id: 's14',
-    title: 'SMIF and Blandin Foundation Partner on Southern Minnesota Rural Initiative',
-    source: 'Post-Bulletin', sourceType: 'news', url: 'https://www.postbulletin.com',
-    date: '2026-06-12', geography: 'local',
-    themes: ['philanthropy', 'community-wealth'], notable: false, method: 'google-alerts',
-    tier: 1, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "Southern Minnesota Initiative Foundation and Blandin Foundation launch a pilot program to strengthen rural community leadership and economic resilience.",
-  },
-  {
-    id: 's15',
-    title: 'Tribal Nations Broadband Summit Recap — Grand Rapids',
-    source: 'Grand Rapids Herald-Review', sourceType: 'news', url: 'https://www.grandrapidsmn.com',
-    date: '2026-06-11', geography: 'local',
-    themes: ['broadband', 'native-nations', 'philanthropy'], notable: true, method: 'manual',
-    tier: 1, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "The annual Tribal Nations Broadband Summit, co-hosted by Blandin Foundation, drew 200 attendees from 8 tribal nations to discuss connectivity solutions for reservation communities.",
-  },
-  {
-    id: 's16',
-    title: 'Blandin Foundation Joins National Rural Philanthropy Day Coalition',
-    source: 'The Chronicle of Philanthropy', sourceType: 'advocacy', url: 'https://www.philanthropy.com',
-    date: '2026-06-10', geography: 'national',
-    themes: ['philanthropy', 'community-wealth'], notable: true, method: 'google-alerts',
-    tier: 3, prominence: 'body', sentiment: 'positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "Blandin Foundation is among 40 place-based foundations joining a new national coalition to increase philanthropic investment in rural communities.",
-  },
-  {
-    id: 's17',
-    title: 'Rural Minnesota Towns Tap Broadband Grants for Economic Growth',
-    source: 'Brainerd Dispatch', sourceType: 'news', url: 'https://www.brainerddispatch.com',
-    date: '2026-06-08', geography: 'local',
-    themes: ['broadband', 'small-communities'], notable: false, method: 'rss-feed',
-    tier: 1, prominence: 'body', sentiment: 'positive', pullThrough: 'partial', narrativeRole: 'passing',
-    snippet: "Small towns in the Brainerd Lakes area are using state and federal broadband grants to attract remote workers and retain young families.",
-  },
-  {
-    id: 's18',
-    title: "Digital Equity Summit Highlights Blandin Foundation's Rural Work",
-    source: 'Fierce Telecom', sourceType: 'news', url: 'https://www.fiercetelecom.com',
-    date: '2026-06-07', geography: 'national',
-    themes: ['broadband', 'philanthropy'], notable: true, method: 'google-alerts',
-    tier: 3, prominence: 'body', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "At the National Digital Equity Summit, Blandin Foundation's broadband program was highlighted as a model for how community foundations can drive connectivity outcomes.",
-  },
-  {
-    id: 's19',
-    title: 'Minnesota Reformer: Mapping the Broadband Desert in Rural MN',
-    source: 'Minnesota Reformer', sourceType: 'news', url: 'https://minnesotareformer.com',
-    date: '2026-06-05', geography: 'state',
-    themes: ['broadband', 'small-communities'], notable: false, method: 'rss-feed',
-    tier: 2, prominence: 'body', sentiment: 'neutral', pullThrough: 'no', narrativeRole: 'passing',
-    snippet: "Rural school districts increasingly focus funding on technology infrastructure and career pathways responding to rural economy needs.",
-  },
-  {
-    id: 's20',
-    title: 'Blandin CEO Speaks at National Rural Development Conference',
-    source: 'The Daily Yonder', sourceType: 'news', url: 'https://dailyyonder.com',
-    date: '2026-06-03', geography: 'national',
-    themes: ['philanthropy', 'community-wealth', 'rural-placemaking'], notable: true, method: 'google-alerts',
-    tier: 3, prominence: 'body', sentiment: 'positive', pullThrough: 'yes', narrativeRole: 'primary',
-    snippet: "Blandin Foundation CEO presents on lessons from two decades of rural community investment, emphasizing resident-led development and patient capital.",
-  },
-];
-
-// ----------------------------------------------------------------
 // STATE
 // ----------------------------------------------------------------
 
@@ -265,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   state.overrides      = loadLS('blandin_overrides', {});
 
   const dateInput = document.getElementById('e-date');
-  if (dateInput) dateInput.value = '2026-06-29';
+  if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
   const prDateInput = document.getElementById('pr-date');
   if (prDateInput) prDateInput.value = new Date().toISOString().slice(0, 10);
 
@@ -328,7 +141,7 @@ function scoreBadge(mention) {
 // ----------------------------------------------------------------
 
 function getBaseMentions() {
-  return [...SAMPLE_MENTIONS, ...AUTO_MENTIONS, ...state.manualEntries.map(e => ({ ...e, method: 'manual' }))];
+  return [...AUTO_MENTIONS, ...state.manualEntries.map(e => ({ ...e, method: 'manual' }))];
 }
 
 function applyOverrides(list) {
