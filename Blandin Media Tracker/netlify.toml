@@ -1,0 +1,6 @@
+# Always publish on every push to main.
+# Netlify's default "skip if nothing changed in the base directory" check
+# broke after the repo history was replaced on 2026-10-28: it canceled real
+# updates with "no content change". Exiting 1 tells Netlify to always build.
+[build]
+  ignore = "exit 1"
