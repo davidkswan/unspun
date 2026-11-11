@@ -192,4 +192,14 @@ const AUTO_MENTIONS = [
     tier: 3, prominence: 'body', sentiment: 'positive', pullThrough: 'partial', narrativeRole: 'source',
     snippet: "An opinion piece arguing that foundations should make mission-aligned loans as rural bank branches disappear cites Blandin Foundation in Grand Rapids, Minnesota, as an example.",
   },
+  {
+    id: 'auto-20261102-taconite-rink-grant',
+    title: 'Grant funds upgrades to Beefy Lawson rink',
+    source: 'Grand Rapids Herald-Review', sourceType: 'news',
+    url: 'http://www.grandrapidsmn.com/news/grant-funds-upgrades-to-beefy-lawson-rink/article_be21a2cf-7f99-4df1-a958-ca65551ab6f1.html',
+    date: '2026-11-02', geography: 'local',
+    themes: ['rural-placemaking', 'small-communities', 'philanthropy'], notable: false, method: 'web-search',
+    tier: 1, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
+    snippet: "A $100,000 Blandin Foundation grant will help the city of Taconite add a warming shack and repair the Beefy Lawson & Vince Saleture Memorial Rink in summer 2027, honoring the late deputy Beefy Lawson and his son Bob's community work.",
+  },
 ];
