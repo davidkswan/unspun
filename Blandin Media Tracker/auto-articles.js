@@ -202,4 +202,14 @@ const AUTO_MENTIONS = [
     tier: 1, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
     snippet: "A $100,000 Blandin Foundation grant will help the city of Taconite add a warming shack and repair the Beefy Lawson & Vince Saleture Memorial Rink in summer 2027, honoring the late deputy Beefy Lawson and his son Bob's community work.",
   },
+  {
+    id: 'auto-20261118-businessnorth-rural-commitment',
+    title: 'A rural commitment: Blandin Foundation serves Grand Rapids region and beyond',
+    source: 'Business North', sourceType: 'news',
+    url: 'https://www.businessnorth.com/businessnorth_exclusives/a-rural-commitment-blandin-foundation-serves-grand-rapids-region-and-beyond/article_9391518a-a2c2-4e45-88d4-ab80db01e260.html',
+    date: '2026-11-18', geography: 'state',
+    themes: ['philanthropy', 'rural-placemaking', 'community-wealth', 'small-communities'], notable: false, method: 'web-search',
+    tier: 2, prominence: 'headline', sentiment: 'very-positive', pullThrough: 'yes', narrativeRole: 'primary',
+    snippet: "A Business North feature marking Blandin Foundation's 85th year traces its roots in Charles Blandin's Grand Rapids paper mill and describes its current focus on rural placemaking, community wealth-building and small communities, with comments from CEO Tuleah Palmer and partner Fairview Grand Itasca.",
+  },
 ];

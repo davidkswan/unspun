@@ -29,4 +29,5 @@ const OUTLET_WATCHLIST = [
   { name: 'Star Tribune',                  domain: 'startribune.com' },
   { name: 'Lakeland PBS',                  domain: 'lakelandpbs.com' },
   { name: 'Grand Rapids Area Community Foundation', domain: 'gracf.org' },
+  { name: 'Business North',                domain: 'businessnorth.com' },
 ];
