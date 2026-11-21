@@ -60,4 +60,5 @@ const SEARCH_LOG = [
     { title: 'A rural commitment: Blandin Foundation serves Grand Rapids region and beyond', url: 'https://www.businessnorth.com/businessnorth_exclusives/a-rural-commitment-blandin-foundation-serves-grand-rapids-region-and-beyond/article_9391518a-a2c2-4e45-88d4-ab80db01e260.html' },
   ] },
   { date: '2026-11-20', found: 0, articles: [] },
+  { date: '2026-11-21', found: 0, articles: [] },
 ];
