@@ -64,4 +64,5 @@ const SEARCH_LOG = [
   { date: '2026-11-22', found: 0, articles: [] },
   { date: '2026-11-23', found: 0, articles: [] },
   { date: '2026-11-24', found: 0, articles: [] },
+  { date: '2026-11-25', found: 0, articles: [] },
 ];
